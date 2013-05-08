@@ -277,7 +277,9 @@ x = 25;
 
 """ + (for order in [2..orderMax]
   """
-  translate([#{26*(order-2)},0,0]) linear_extrude(height = 5) BezLine( [
+
+  translate([#{26*(order-2)},0,0]) linear_extrude(height = 5) 
+  BezLine( [
     [0,0],
     #{("[#{
       switch 
@@ -305,11 +307,13 @@ BezWall([
       centered = true
 );
 
-linear_extrude(height = 5) BezLine([
+linear_extrude(height = 5) 
+BezLine([
   [0,-10], [5, -20], [0,-30]
   ], width = [5, 10], resolution = 2, centered = true);
 
-linear_extrude(height = 5) BezLine([
+linear_extrude(height = 5) 
+BezLine([
   [0,10], [5, 20], [0,30]
   ], width = [5, 10], resolution = 3, centered = false);
 

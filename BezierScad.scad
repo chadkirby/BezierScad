@@ -1,6 +1,6 @@
 /* 
   Bezier functions for OpenScad
-  Generated from BezierScad.coffee from darwin at Tue May 07 2013 21:16:08 GMT-0700 (PDT)
+  Generated from BezierScad.coffee from darwin at Tue May 07 2013 21:18:25 GMT-0700 (PDT)
   Supports Bezier interpolation with 1-8 controls
   Sources/Inspirations:
     http://en.wikipedia.org/wiki/Bézier_curve

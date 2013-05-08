@@ -1,36 +1,50 @@
 use <BezierScad.scad>;
 x = 25;
-translate([0,0,0]) linear_extrude(height = 5) BezLine( [
+
+translate([0,0,0]) linear_extrude(height = 5) 
+BezLine( [
   [0,0],
   [x/2, 5],
   [x,0],
 ] , [1.5], 3 );
-translate([26,0,0]) linear_extrude(height = 5) BezLine( [
+
+translate([26,0,0]) linear_extrude(height = 5) 
+BezLine( [
   [0,0],
   [0, x], [x, x],
   [x,0],
 ] , [1.5], 3 );
-translate([52,0,0]) linear_extrude(height = 5) BezLine( [
+
+translate([52,0,0]) linear_extrude(height = 5) 
+BezLine( [
   [0,0],
   [0, x], [x/2, 5], [x, x],
   [x,0],
 ] , [1.5], 3 );
-translate([78,0,0]) linear_extrude(height = 5) BezLine( [
+
+translate([78,0,0]) linear_extrude(height = 5) 
+BezLine( [
   [0,0],
   [0, x], [0, x], [x, x], [x, x],
   [x,0],
 ] , [1.5], 4 );
-translate([104,0,0]) linear_extrude(height = 5) BezLine( [
+
+translate([104,0,0]) linear_extrude(height = 5) 
+BezLine( [
   [0,0],
   [0, x], [0, x], [x/2, 5], [x, x], [x, x],
   [x,0],
 ] , [1.5], 4 );
-translate([130,0,0]) linear_extrude(height = 5) BezLine( [
+
+translate([130,0,0]) linear_extrude(height = 5) 
+BezLine( [
   [0,0],
   [0, x], [0, x], [0, x], [x, x], [x, x], [x, x],
   [x,0],
 ] , [1.5], 4 );
-translate([156,0,0]) linear_extrude(height = 5) BezLine( [
+
+translate([156,0,0]) linear_extrude(height = 5) 
+BezLine( [
   [0,0],
   [0, x], [0, x], [0, x], [x/2, 5], [x, x], [x, x], [x, x],
   [x,0],
@@ -46,11 +60,13 @@ BezWall([
       centered = true
 );
 
-linear_extrude(height = 5) BezLine([
+linear_extrude(height = 5) 
+BezLine([
   [0,-10], [5, -20], [0,-30]
   ], width = [5, 10], resolution = 2, centered = true);
 
-linear_extrude(height = 5) BezLine([
+linear_extrude(height = 5) 
+BezLine([
   [0,10], [5, 20], [0,30]
   ], width = [5, 10], resolution = 3, centered = false);
 
