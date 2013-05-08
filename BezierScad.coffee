@@ -296,11 +296,7 @@ x = 25;
         when i is order/2 then "x/2"
         when i < order/2 then "0"
         else "x"
-     }, #{
-      switch 
-        when i is order/2 then "5"
-        else "x"
-     }]" for i in [1...order]).join(", ")},
+     }, x]" for i in [1...order]).join(", ")},
     [x,0],
   ] , [1.5], #{2+Math.round(order/3)} );
   """

@@ -4,7 +4,7 @@ x = 25;
 translate([0,0,0]) linear_extrude(height = 5) 
 BezLine( [
   [0,0],
-  [x/2, 5],
+  [x/2, x],
   [x,0],
 ] , [1.5], 3 );
 
@@ -18,7 +18,7 @@ BezLine( [
 translate([54,0,0]) linear_extrude(height = 5) 
 BezLine( [
   [0,0],
-  [0, x], [x/2, 5], [x, x],
+  [0, x], [x/2, x], [x, x],
   [x,0],
 ] , [1.5], 3 );
 
@@ -32,7 +32,7 @@ BezLine( [
 translate([108,0,0]) linear_extrude(height = 5) 
 BezLine( [
   [0,0],
-  [0, x], [0, x], [x/2, 5], [x, x], [x, x],
+  [0, x], [0, x], [x/2, x], [x, x], [x, x],
   [x,0],
 ] , [1.5], 4 );
 
