@@ -8,47 +8,40 @@ BezLine( [
   [x,0],
 ] , [1.5], 3 );
 
-translate([26,0,0]) linear_extrude(height = 5) 
+translate([27,0,0]) linear_extrude(height = 5) 
 BezLine( [
   [0,0],
   [0, x], [x, x],
   [x,0],
 ] , [1.5], 3 );
 
-translate([52,0,0]) linear_extrude(height = 5) 
+translate([54,0,0]) linear_extrude(height = 5) 
 BezLine( [
   [0,0],
   [0, x], [x/2, 5], [x, x],
   [x,0],
 ] , [1.5], 3 );
 
-translate([78,0,0]) linear_extrude(height = 5) 
+translate([81,0,0]) linear_extrude(height = 5) 
 BezLine( [
   [0,0],
   [0, x], [0, x], [x, x], [x, x],
   [x,0],
 ] , [1.5], 4 );
 
-translate([104,0,0]) linear_extrude(height = 5) 
+translate([108,0,0]) linear_extrude(height = 5) 
 BezLine( [
   [0,0],
   [0, x], [0, x], [x/2, 5], [x, x], [x, x],
   [x,0],
 ] , [1.5], 4 );
 
-translate([130,0,0]) linear_extrude(height = 5) 
+translate([135,0,0]) linear_extrude(height = 5) 
 BezLine( [
   [0,0],
   [0, x], [0, x], [0, x], [x, x], [x, x], [x, x],
   [x,0],
 ] , [1.5], 4 );
-
-translate([156,0,0]) linear_extrude(height = 5) 
-BezLine( [
-  [0,0],
-  [0, x], [0, x], [0, x], [x/2, 5], [x, x], [x, x], [x, x],
-  [x,0],
-] , [1.5], 5 );
 
 BezWall([
   [-0.1,0],

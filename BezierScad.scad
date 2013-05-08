@@ -1,6 +1,6 @@
 /* 
   Bezier functions for OpenScad
-  Generated from BezierScad.coffee from darwin at Tue May 07 2013 21:18:25 GMT-0700 (PDT)
+  Generated from BezierScad.coffee from darwin at Tue May 07 2013 21:29:59 GMT-0700 (PDT)
   Supports Bezier interpolation with 1-8 controls
   Sources/Inspirations:
     http://en.wikipedia.org/wiki/Bézier_curve
@@ -29,8 +29,13 @@ THE SOFTWARE.
 */
 
 
-module BezLine(ctlPts, width = [1], resolution = 4, centered = false) {
+module BezLine(ctlPts, width = [1], resolution = 4, centered = false, showCtls = true) {
   hodoPts = hodograph(ctlPts);
+  if (showCtls) {
+    for (pt = ctlPts) {
+      % translate([pt[0], pt[1], 0]) circle(1);
+    }
+  }
   if (resolution == 2) {
     if (centered) {
       polygon([
@@ -84,8 +89,13 @@ module BezLine(ctlPts, width = [1], resolution = 4, centered = false) {
   }
 }
 
-module BezWall(ctlPts, widthCtls = [1], heightCtls = [1], resolution = 4, centered = false) {
+module BezWall(ctlPts, widthCtls = [1], heightCtls = [1], resolution = 4, centered = false, showCtls = true) {
   hodoPts = hodograph(ctlPts);
+  if (showCtls) {
+    for (pt = ctlPts) {
+      % translate([pt[0], pt[1], 0]) circle(1);
+    }
+  }
   steps = pow(2, resolution) - 1; // max res 6
   for(step = [steps:1])
   {

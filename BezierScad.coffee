@@ -96,8 +96,13 @@ THE SOFTWARE.
 
 bezScad += """
 
-module BezLine(ctlPts, width = [1], resolution = 4, centered = false) {
+module BezLine(ctlPts, width = [1], resolution = 4, centered = false, showCtls = true) {
   hodoPts = hodograph(ctlPts);
+  if (showCtls) {
+    for (pt = ctlPts) {
+      % translate([pt[0], pt[1], 0]) circle(1);
+    }
+  }
 
 """ + (
   for resolution in [2..maxLineResolution]
@@ -136,8 +141,13 @@ module BezLine(ctlPts, width = [1], resolution = 4, centered = false) {
 bezScad += """
 
 
-module BezWall(ctlPts, widthCtls = [1], heightCtls = [1], resolution = 4, centered = false) {
+module BezWall(ctlPts, widthCtls = [1], heightCtls = [1], resolution = 4, centered = false, showCtls = true) {
   hodoPts = hodograph(ctlPts);
+  if (showCtls) {
+    for (pt = ctlPts) {
+      % translate([pt[0], pt[1], 0]) circle(1);
+    }
+  }
   steps = pow(2, resolution) - 1; // max res 6
   for(step = [steps:1])
   {
@@ -275,10 +285,10 @@ bezTest = """
 use <#{filename}>;
 x = 25;
 
-""" + (for order in [2..orderMax]
+""" + (for order in [2...orderMax]
   """
 
-  translate([#{26*(order-2)},0,0]) linear_extrude(height = 5) 
+  translate([#{27*(order-2)},0,0]) linear_extrude(height = 5) 
   BezLine( [
     [0,0],
     #{("[#{
