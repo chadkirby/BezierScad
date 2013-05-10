@@ -140,43 +140,114 @@ module BezLine(ctlPts, width = [1], resolution = 4, centered = false, showCtls =
 
 bezScad += """
 
-
-module BezWall(ctlPts, widthCtls = [1], heightCtls = [1], resolution = 4, centered = false, showCtls = true) {
+triangles = [ [0,2,1], [0,3,2], [0,4,5], [0,1,4], [0,6,3], [0,5,6], [4,6,5], [4,7,6], [1,2,7], [1,7,4], [2,3,6], [2,6,7], ];
+module BezWall( 
+  ctlPts, 
+  width = 1, 
+  height = 1, 
+  steps = 16,
+  widthCtls = [], 
+  heightCtls = [], 
+  centered = false, 
+  showCtlR = 1
+) {
   hodoPts = hodograph(ctlPts);
-  if (showCtls) {
+  if (showCtlR > 0) {
     for (pt = ctlPts) {
-      % translate([pt[0], pt[1], 0]) circle(1);
+      % translate([pt[0], pt[1], 0]) circle(showCtlR);
     }
   }
-  steps = pow(2, resolution) - 1; // max res 6
-  for(step = [steps:1])
+  for(step = [steps-1 : 1])
   {
     assign(
-      t1 = step/steps, 
-      t0 = (step-1)/steps
+      t1 = step/(steps-1), 
+      t0 = (step-1)/(steps-1)
     ) {
-      linear_extrude( height = BezI(t0, heightCtls) , convexity = 10) 
+    assign(
+      hgt0 = len(heightCtls) > 0 ? BezI(t0, heightCtls) : height,
+      hgt1 = len(heightCtls) > 0 ? BezI(t1, heightCtls) : height,
+      wid0 = len(widthCtls) > 0 ? BezI(t0, widthCtls) : width, 
+      wid1 = len(widthCtls) > 0 ? BezI(t1, widthCtls) : width
+    ) {
       if (centered) {
-        assign(wid0 = BezI(t0, widthCtls)/2, wid1 = BezI(t1, widthCtls)/2) {
-          polygon([
-            PerpAlongBez(t1, ctlPts, dist = wid1, hodograph = hodoPts),
-            PerpAlongBez(t0, ctlPts, dist = wid0, hodograph = hodoPts),
-            PerpAlongBez(t0, ctlPts, dist = -wid0, hodograph = hodoPts),
-            PerpAlongBez(t1, ctlPts, dist = -wid1, hodograph = hodoPts),
-          ]);
+        assign(
+          p0 = PerpAlongBez(t0, ctlPts, dist = wid0/2, hodograph = hodoPts),
+          p1 = PerpAlongBez(t0, ctlPts, dist = -wid0/2, hodograph = hodoPts),
+          p4 = PerpAlongBez(t1, ctlPts, dist = -wid1/2, hodograph = hodoPts),
+          p5 = PerpAlongBez(t1, ctlPts, dist = wid1/2, hodograph = hodoPts)
+        ) {
+          if (hgt0 == 0 && hgt1 == 0 ) {
+            polygon([ p5, p0, p1, p4 ]);
+          } else if (hgt0 == hgt1) {
+            linear_extrude(height = hgt0, convexity = 2) polygon([ p5, p0, p1, p4 ]);
+          } else {
+            polyhedron(
+              points =[
+                [p0[0],p0[1],0], // 0
+                [p1[0],p1[1],0], // 1
+                [p1[0],p1[1],hgt0], // 2
+                [p0[0],p0[1],hgt0], // 3
+                [p4[0],p4[1],0], // 4
+                [p5[0],p5[1],0], // 5
+                [p5[0],p5[1],hgt1], // 6
+                [p4[0],p4[1],hgt1], // 7
+              ],
+              triangles = triangles,
+              convexity = 2
+            );
+          }
         }
       } else {
-        polygon([
-          PointAlongBez(t1, ctlPts),
-          PointAlongBez(t0, ctlPts),
-          PerpAlongBez(t0, ctlPts, dist = BezI(t0, widthCtls), hodograph = hodoPts),
-          PerpAlongBez(t1, ctlPts, dist = BezI(t1, widthCtls), hodograph = hodoPts),
-        ]);
+        assign(
+          p0 = PointAlongBez(t0, ctlPts),
+          p1 = PerpAlongBez(t0, ctlPts, dist = wid0, hodograph = hodoPts),
+          p4 = PerpAlongBez(t1, ctlPts, dist = wid1, hodograph = hodoPts),
+          p5 = PointAlongBez(t1, ctlPts)
+        ) {
+          if (hgt0 == 0 && hgt1 == 0 ) {
+            polygon([ p5, p0, p1, p4 ]);
+          } else if (hgt0 == hgt1) {
+            linear_extrude(height = hgt0, convexity = 2) polygon([ p5, p0, p1, p4 ]);
+          } else {
+            polyhedron(
+              points =[
+                [p0[0],p0[1],0], // 0
+                [p1[0],p1[1],0], // 1
+                [p1[0],p1[1],hgt0], // 2
+                [p0[0],p0[1],hgt0], // 3
+                [p4[0],p4[1],0], // 4
+                [p5[0],p5[1],0], // 5
+                [p5[0],p5[1],hgt1], // 6
+                [p4[0],p4[1],hgt1], // 7
+              ],
+              triangles = triangles,
+              convexity = 2
+            );
+          }
+        }
       }
-    }
+    } }
   }
 }
 
+module BezArc(ctlPts, focalPoint, steps=12, heightCtls = [1], showCtlR = 1)
+{
+  if (showCtlR > 0) {
+    for (pt = ctlPts) {
+      % translate([pt[0], pt[1], 0]) circle(showCtlR);
+    }
+  }
+
+  for(step = [steps:1])
+  {
+    linear_extrude( height = BezI(step/steps, heightCtls) , convexity = 2) 
+    polygon([
+      focalPoint,
+      PointAlongBez(step/steps, ctlPts),
+      PointAlongBez((step-1)/steps, ctlPts)
+    ]);
+  }
+}
 
 """ 
 
@@ -288,8 +359,8 @@ x = 25;
 """ + (for order in [2...orderMax]
   """
 
-  translate([#{27*(order-2)},0,0]) linear_extrude(height = 5) 
-  BezLine( [
+  translate([#{30*(order-1.75)},0,0]) 
+  BezWall( [
     [0,0],
     #{("[#{
       switch 
@@ -298,7 +369,7 @@ x = 25;
         else "x"
      }, x]" for i in [1...order]).join(", ")},
     [x,0],
-  ] , [1.5], #{2+Math.round(order/3)} );
+  ] , width = 1.5, height = 10, steps = #{order*2}, centered = true );
   """
 ).join('\n') + """
 
@@ -307,10 +378,35 @@ BezWall([
   [-0.1,0],
   [-20, 0],
   [-25,25]
-  ],  widthCtls = [10, 4], 
+  ],  widthCtls = [10, 1], 
       heightCtls = [1, 5, 6, 35], 
-      resolution = 5,
+      steps = 32,
       centered = true
+);
+translate([0,30,0])
+BezWall([
+  [-0.1,0],
+  [-15, 0],
+  [-15, 25],
+  [-25,25]
+  ],  
+    width = 2, 
+    heightCtls = [1, 35, 1], 
+    steps = 16,
+    centered = false
+);
+
+translate([-30,30,0])
+BezWall([
+  [-0.1,0],
+  [-15, 0],
+  [-15, 25],
+  [-25,25]
+  ],  
+    widthCtls = [2, 10], 
+    height = 5, 
+    steps = 16,
+    centered = true
 );
 
 linear_extrude(height = 5) 
@@ -323,7 +419,12 @@ BezLine([
   [0,10], [5, 20], [0,30]
   ], width = [5, 10], resolution = 3, centered = false);
 
-
+translate([-10, -10,0])
+BezArc([
+  [-10,-1],
+  [-10, -10],
+  [-1,-10]
+  ], [-1,-1], heightCtls = [1,10]);
 """
 
 require('fs').writeFile "./BezierTest.scad", bezTest
