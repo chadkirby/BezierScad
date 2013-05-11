@@ -1,6 +1,6 @@
 /* 
   Bezier functions for OpenScad
-  Generated from BezierScad.coffee from darwin at Thu May 09 2013 20:58:42 GMT-0700 (PDT)
+  Generated from BezierScad.coffee from darwin at Fri May 10 2013 22:35:15 GMT-0700 (PDT)
   Supports Bezier interpolation with 1-8 controls
   Sources/Inspirations:
     http://en.wikipedia.org/wiki/Bézier_curve
@@ -88,7 +88,6 @@ module BezLine(ctlPts, width = [1], resolution = 4, centered = false, showCtls =
     }
   }
 }
-triangles = [ [0,2,1], [0,3,2], [0,4,5], [0,1,4], [0,6,3], [0,5,6], [4,6,5], [4,7,6], [1,2,7], [1,7,4], [2,3,6], [2,6,7], ];
 module BezWall( 
   ctlPts, 
   width = 1, 
@@ -105,6 +104,7 @@ module BezWall(
       % translate([pt[0], pt[1], 0]) circle(showCtlR);
     }
   }
+  triangles = [ [0,2,1], [0,3,2], [0,4,5], [0,1,4], [0,6,3], [0,5,6], [4,6,5], [4,7,6], [1,2,7], [1,7,4], [2,3,6], [2,6,7], ];
   for(step = [steps-1 : 1])
   {
     assign(
@@ -119,10 +119,10 @@ module BezWall(
     ) {
       if (centered) {
         assign(
-          p0 = PerpAlongBez(t0, ctlPts, dist = wid0/2, hodograph = hodoPts),
-          p1 = PerpAlongBez(t0, ctlPts, dist = -wid0/2, hodograph = hodoPts),
-          p4 = PerpAlongBez(t1, ctlPts, dist = -wid1/2, hodograph = hodoPts),
-          p5 = PerpAlongBez(t1, ctlPts, dist = wid1/2, hodograph = hodoPts)
+          p0 = PerpAlongBez(t0, ctlPts, dist = -wid0/2, hodograph = hodoPts),
+          p1 = PerpAlongBez(t0, ctlPts, dist = wid0/2, hodograph = hodoPts),
+          p4 = PerpAlongBez(t1, ctlPts, dist = wid1/2, hodograph = hodoPts),
+          p5 = PerpAlongBez(t1, ctlPts, dist = -wid1/2, hodograph = hodoPts)
         ) {
           if (hgt0 == 0 && hgt1 == 0 ) {
             polygon([ p5, p0, p1, p4 ]);
@@ -178,22 +178,56 @@ module BezWall(
   }
 }
 
-module BezArc(ctlPts, focalPoint, steps=12, heightCtls = [1], showCtlR = 1)
+module BezArc(ctlPts, focalPoint, steps=12, height = 1, heightCtls = [], showCtlR = 1)
 {
   if (showCtlR > 0) {
     for (pt = ctlPts) {
       % translate([pt[0], pt[1], 0]) circle(showCtlR);
     }
   }
-
-  for(step = [steps:1])
+  triangles = [
+    [0,1,2],
+    [3,4,5],
+    [1,5,4],
+    [2,5,1],
+    [0,1,4],
+    [0,4,3],
+    [0,5,2],
+    [0,3,5],
+    ];
+  for(step = [steps-1 : 1])
   {
-    linear_extrude( height = BezI(step/steps, heightCtls) , convexity = 2) 
-    polygon([
-      focalPoint,
-      PointAlongBez(step/steps, ctlPts),
-      PointAlongBez((step-1)/steps, ctlPts)
-    ]);
+    assign(
+      t1 = step/(steps-1), 
+      t0 = (step-1)/(steps-1),
+      fp = [focalPoint[0], focalPoint[1], len(heightCtls) > 0 ? BezI(0, heightCtls) : height]
+    ) {
+    assign(
+      hgt0 = len(heightCtls) > 0 ? BezI(t0, heightCtls) : height,
+      hgt1 = len(heightCtls) > 0 ? BezI(t1, heightCtls) : height,
+      p0 = PointAlongBez(t0, ctlPts), 
+      p1 = PointAlongBez(t1, ctlPts)
+    ) {
+      if (hgt0 == 0 && hgt1 == 0 ) {
+        polygon([ focalPoint, p0, p1 ]);
+      } else if (hgt0 == hgt1 || true) {
+        linear_extrude(height = hgt0, convexity = 2) polygon([ focalPoint, p0, p1 ]);
+      } else {
+        polyhedron( // not manifold
+          points = [
+            [focalPoint[0], focalPoint[1], 0],  // 0
+            [p1[0], p1[1], 0],                  // 1
+            [p0[0], p0[1], 0],                  // 2
+            [focalPoint[0], focalPoint[1], hgt0], // 3
+            [p1[0], p1[1], hgt1],               // 4
+            [p0[0], p0[1], hgt0],               // 5
+            [focalPoint[0], focalPoint[1], hgt1], // 6
+          ],
+          triangles = triangles,
+          convexity = 2
+        );
+      }
+    } }
   }
 }
 function PointAlongBez(t, ctlPts) = 
