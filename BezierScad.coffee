@@ -238,7 +238,7 @@ module BezArc(ctlPts, focalPoint, steps=12, height = 1, heightCtls = [], showCtl
     }
   }
   triangles = [
-    [0,1,2],
+    [0,2,1],
     [3,4,5],
     [1,5,4],
     [2,5,1],
@@ -262,7 +262,7 @@ module BezArc(ctlPts, focalPoint, steps=12, height = 1, heightCtls = [], showCtl
     ) {
       if (hgt0 == 0 && hgt1 == 0 ) {
         polygon([ focalPoint, p0, p1 ]);
-      } else if (hgt0 == hgt1 || true) {
+      } else if (hgt0 == hgt1) {
         linear_extrude(height = hgt0, convexity = 2) polygon([ focalPoint, p0, p1 ]);
       } else {
         polyhedron( // not manifold
