@@ -104,7 +104,20 @@ module BezWall(
       % translate([pt[0], pt[1], 0]) circle(showCtlR);
     }
   }
-  triangles = [ [0,2,1], [0,3,2], [0,4,5], [0,1,4], [0,6,3], [0,5,6], [4,6,5], [4,7,6], [1,2,7], [1,7,4], [2,3,6], [2,6,7], ];
+  triangles = [ 
+    [0,2,1], 
+    [0,3,2], 
+    [0,4,5], 
+    [0,1,4], 
+    [0,6,3], 
+    [0,5,6], 
+    [4,6,5], 
+    [4,7,6], 
+    [1,2,7], 
+    [1,7,4], 
+    [2,3,6], 
+    [2,6,7]
+    ];
   for(step = [steps-1 : 1])
   {
     assign(
@@ -195,7 +208,7 @@ module BezArc(ctlPts, focalPoint, steps=12, height = 1, heightCtls = [], showCtl
     [0,5,2],
     [0,3,5],
     ];
-  for(step = [steps-1 : 1])
+  for(step = [1 : steps-1])
   {
     assign(
       t1 = step/(steps-1), 
@@ -209,7 +222,8 @@ module BezArc(ctlPts, focalPoint, steps=12, height = 1, heightCtls = [], showCtl
       p1 = PointAlongBez(t1, ctlPts)
     ) {
       if (hgt0 == 0 && hgt1 == 0 ) {
-        polygon([ focalPoint, p0, p1 ]);
+        // polygon([ focalPoint, p0, p1, [focalPoint[0], p1[1]] ]); // makes a solid in 2014.01.14, but won't render in OpenSCAD version 2014.05.17
+        polygon([ focalPoint, p0, p1 ]); // won't render in OpenSCAD 2014.01.14; will render in 2015.02.20
       } else if (hgt0 == hgt1 || false) {
         linear_extrude(height = hgt0, convexity = 2) polygon([ focalPoint, p0, p1 ]);
       } else {
