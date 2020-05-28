@@ -118,76 +118,64 @@ module BezWall(
     [2,3,6], 
     [2,6,7]
     ];
-  for(step = [steps-1 : 1])
-  {
-    assign(
-      t1 = step/(steps-1), 
-      t0 = (step-1)/(steps-1)
-    ) {
-    assign(
-      hgt0 = len(heightCtls) > 0 ? BezI(t0, heightCtls) : height,
-      hgt1 = len(heightCtls) > 0 ? BezI(t1, heightCtls) : height,
-      wid0 = len(widthCtls) > 0 ? BezI(t0, widthCtls) : width, 
-      wid1 = len(widthCtls) > 0 ? BezI(t1, widthCtls) : width
-    ) {
-      if (centered) {
-        assign(
-          p0 = PerpAlongBez(t0, ctlPts, dist = -wid0/2, hodograph = hodoPts),
-          p1 = PerpAlongBez(t0, ctlPts, dist = wid0/2, hodograph = hodoPts),
-          p4 = PerpAlongBez(t1, ctlPts, dist = wid1/2, hodograph = hodoPts),
-          p5 = PerpAlongBez(t1, ctlPts, dist = -wid1/2, hodograph = hodoPts)
-        ) {
-          if (hgt0 == 0 && hgt1 == 0 ) {
-            polygon([ p5, p0, p1, p4 ]);
-          } else if (hgt0 == hgt1) {
-            linear_extrude(height = hgt0, convexity = 2) polygon([ p5, p0, p1, p4 ]);
-          } else {
-            polyhedron(
-              points =[
-                [p0[0],p0[1],0], // 0
-                [p1[0],p1[1],0], // 1
-                [p1[0],p1[1],hgt0], // 2
-                [p0[0],p0[1],hgt0], // 3
-                [p4[0],p4[1],0], // 4
-                [p5[0],p5[1],0], // 5
-                [p5[0],p5[1],hgt1], // 6
-                [p4[0],p4[1],hgt1], // 7
-              ],
-              triangles = triangles,
-              convexity = 2
-            );
-          }
-        }
+  for(step = [steps-1 : -1 : 1]) {
+    t1 = step/(steps-1);
+    t0 = (step-1)/(steps-1);
+    hgt0 = len(heightCtls) > 0 ? BezI(t0, heightCtls) : height;
+    hgt1 = len(heightCtls) > 0 ? BezI(t1, heightCtls) : height;
+    wid0 = len(widthCtls) > 0 ? BezI(t0, widthCtls) : width;
+    wid1 = len(widthCtls) > 0 ? BezI(t1, widthCtls) : width;
+    if (centered) {
+      p0 = PerpAlongBez(t0, ctlPts, dist = -wid0/2, hodograph = hodoPts);
+      p1 = PerpAlongBez(t0, ctlPts, dist = wid0/2, hodograph = hodoPts);
+      p4 = PerpAlongBez(t1, ctlPts, dist = wid1/2, hodograph = hodoPts);
+      p5 = PerpAlongBez(t1, ctlPts, dist = -wid1/2, hodograph = hodoPts);
+      if (hgt0 == 0 && hgt1 == 0 ) {
+        polygon([ p5, p0, p1, p4 ]);
+      } else if (hgt0 == hgt1) {
+        linear_extrude(height = hgt0, convexity = 2) polygon([ p5, p0, p1, p4 ]);
       } else {
-        assign(
-          p0 = PointAlongBez(t0, ctlPts),
-          p1 = PerpAlongBez(t0, ctlPts, dist = wid0, hodograph = hodoPts),
-          p4 = PerpAlongBez(t1, ctlPts, dist = wid1, hodograph = hodoPts),
-          p5 = PointAlongBez(t1, ctlPts)
-        ) {
-          if (hgt0 == 0 && hgt1 == 0 ) {
-            polygon([ p5, p0, p1, p4 ]);
-          } else if (hgt0 == hgt1) {
-            linear_extrude(height = hgt0, convexity = 2) polygon([ p5, p0, p1, p4 ]);
-          } else {
-            polyhedron(
-              points =[
-                [p0[0],p0[1],0], // 0
-                [p1[0],p1[1],0], // 1
-                [p1[0],p1[1],hgt0], // 2
-                [p0[0],p0[1],hgt0], // 3
-                [p4[0],p4[1],0], // 4
-                [p5[0],p5[1],0], // 5
-                [p5[0],p5[1],hgt1], // 6
-                [p4[0],p4[1],hgt1], // 7
-              ],
-              triangles = triangles,
-              convexity = 2
-            );
-          }
-        }
+        polyhedron(
+          points =[
+            [p0[0],p0[1],0], // 0
+            [p1[0],p1[1],0], // 1
+            [p1[0],p1[1],hgt0], // 2
+            [p0[0],p0[1],hgt0], // 3
+            [p4[0],p4[1],0], // 4
+            [p5[0],p5[1],0], // 5
+            [p5[0],p5[1],hgt1], // 6
+            [p4[0],p4[1],hgt1], // 7
+          ],
+          faces = triangles,
+          convexity = 2
+        );
       }
-    } }
+    } else {
+      p0 = PointAlongBez(t0, ctlPts);
+      p1 = PerpAlongBez(t0, ctlPts, dist = wid0, hodograph = hodoPts);
+      p4 = PerpAlongBez(t1, ctlPts, dist = wid1, hodograph = hodoPts);
+      p5 = PointAlongBez(t1, ctlPts);
+      if (hgt0 == 0 && hgt1 == 0 ) {
+        polygon([ p5, p0, p1, p4 ]);
+      } else if (hgt0 == hgt1) {
+        linear_extrude(height = hgt0, convexity = 2) polygon([ p5, p0, p1, p4 ]);
+      } else {
+        polyhedron(
+          points =[
+            [p0[0],p0[1],0], // 0
+            [p1[0],p1[1],0], // 1
+            [p1[0],p1[1],hgt0], // 2
+            [p0[0],p0[1],hgt0], // 3
+            [p4[0],p4[1],0], // 4
+            [p5[0],p5[1],0], // 5
+            [p5[0],p5[1],hgt1], // 6
+            [p4[0],p4[1],hgt1], // 7
+          ],
+          faces = triangles,
+          convexity = 2
+        );
+      }
+    }
   }
 }
 
@@ -208,40 +196,34 @@ module BezArc(ctlPts, focalPoint, steps=12, height = 1, heightCtls = [], showCtl
     [0,5,2],
     [0,3,5],
     ];
-  for(step = [1 : steps-1])
-  {
-    assign(
-      t1 = step/(steps-1), 
-      t0 = (step-1)/(steps-1),
-      fp = [focalPoint[0], focalPoint[1], len(heightCtls) > 0 ? BezI(0, heightCtls) : height]
-    ) {
-    assign(
-      hgt0 = len(heightCtls) > 0 ? BezI(t0, heightCtls) : height,
-      hgt1 = len(heightCtls) > 0 ? BezI(t1, heightCtls) : height,
-      p0 = PointAlongBez(t0, ctlPts), 
-      p1 = PointAlongBez(t1, ctlPts)
-    ) {
-      if (hgt0 == 0 && hgt1 == 0 ) {
-        // polygon([ focalPoint, p0, p1, [focalPoint[0], p1[1]] ]); // makes a solid in 2014.01.14, but won't render in OpenSCAD version 2014.05.17
-        polygon([ focalPoint, p0, p1 ]); // won't render in OpenSCAD 2014.01.14; will render in 2015.02.20
-      } else if (hgt0 == hgt1 || false) {
-        linear_extrude(height = hgt0, convexity = 2) polygon([ focalPoint, p0, p1 ]);
-      } else {
-        polyhedron( // not manifold
-          points = [
-            [focalPoint[0], focalPoint[1], 0],  // 0
-            [p1[0], p1[1], 0],                  // 1
-            [p0[0], p0[1], 0],                  // 2
-            [focalPoint[0], focalPoint[1], hgt0], // 3
-            [p1[0], p1[1], hgt1],               // 4
-            [p0[0], p0[1], hgt0],               // 5
-            [focalPoint[0], focalPoint[1], hgt1], // 6
-          ],
-          triangles = triangles,
-          convexity = 2
-        );
-      }
-    } }
+  for(step = [1 : steps-1]) {
+    t1 = step/(steps-1);
+    t0 = (step-1)/(steps-1);
+    fp = [focalPoint[0], focalPoint[1], len(heightCtls) > 0 ? BezI(0, heightCtls) : height];
+    hgt0 = len(heightCtls) > 0 ? BezI(t0, heightCtls) : height;
+    hgt1 = len(heightCtls) > 0 ? BezI(t1, heightCtls) : height;
+    p0 = PointAlongBez(t0, ctlPts);
+    p1 = PointAlongBez(t1, ctlPts);
+    if (hgt0 == 0 && hgt1 == 0 ) {
+      // polygon([ focalPoint, p0, p1, [focalPoint[0], p1[1]] ]); // makes a solid in 2014.01.14, but won't render in OpenSCAD version 2014.05.17
+      polygon([ focalPoint, p0, p1 ]); // won't render in OpenSCAD 2014.01.14; will render in 2015.02.20
+    } else if (hgt0 == hgt1 || false) {
+      linear_extrude(height = hgt0, convexity = 2) polygon([ focalPoint, p0, p1 ]);
+    } else {
+      polyhedron( // not manifold
+        points = [
+          [focalPoint[0], focalPoint[1], 0],  // 0
+          [p1[0], p1[1], 0],                  // 1
+          [p0[0], p0[1], 0],                  // 2
+          [focalPoint[0], focalPoint[1], hgt0], // 3
+          [p1[0], p1[1], hgt1],               // 4
+          [p0[0], p0[1], hgt0],               // 5
+          [focalPoint[0], focalPoint[1], hgt1], // 6
+        ],
+        faces = triangles,
+        convexity = 2
+      );
+    }
   }
 }
 function PointAlongBez(t, ctlPts) = 
